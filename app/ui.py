@@ -32,6 +32,9 @@ def launch_ui():
     root = tk.Tk()
     root.title("Sinhala Spell and Grammar Checker")
 
+    # Disable window resizing
+    root.resizable(False, False)
+
     # Input Text Box
     tk.Label(root, text="Enter Text:").pack()
     input_box = tk.Text(root, height=10, width=50)
