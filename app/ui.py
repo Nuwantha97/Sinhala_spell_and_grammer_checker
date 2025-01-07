@@ -9,6 +9,7 @@ import pandas as pd
 sinhala_dictionary = load_dictionary("data/sinhala_dict_with_ipa.csv")
 
 def launch_ui():
+
     def check_spelling():
         input_text = input_box.get("1.0", tk.END).strip()
         if not input_text:
