@@ -11,7 +11,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score, confusion_m
 
 class SinhalaGrammarChecker:
     def __init__(self):
-        self.model_path = "C:/Projects/AI/Sinhala_Spell_and_Grammer_Checker/models/model2" #"../models/model2"
+        self.model_path = "models/model2"
         self.tokenizer = None
         self.model = None
         self.max_length = 512

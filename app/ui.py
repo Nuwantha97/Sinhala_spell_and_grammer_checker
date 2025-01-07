@@ -18,15 +18,7 @@ def launch_ui():
         try:
             # Perform spell checking
             original_sentence, corrected_sentence, suggestions = check_sentence(input_text, sinhala_dictionary)
-            
-            # Display spelling suggestions
-            suggestion_box.delete("1.0", tk.END)
-            for word, suggestion_list in suggestions.items():
-                suggestion_box.insert(tk.END, f"Spell check for: {word}\n")
-                for i, (suggestion, distance) in enumerate(suggestion_list, 1):
-                    suggestion_box.insert(tk.END, f"  {i}. {suggestion}\n")
-                suggestion_box.insert(tk.END, "\n")
-            
+    
             # Perform grammar check on corrected sentence
             check_grammar(corrected_sentence)
             
@@ -37,7 +29,7 @@ def launch_ui():
         try:
             # Initialize grammar checker
             grammar_checker = SinhalaGrammarChecker()
-            grammar_checker.load_model("C:/Projects/AI/Sinhala_Spell_and_Grammer_Checker/models/model2")
+            grammar_checker.load_model("models/model2")
             
             # Get DataFrame for corrections
             df = pd.read_csv("data/merged_sentences.csv")
@@ -51,16 +43,17 @@ def launch_ui():
             if result['has_error']:
                 result_box.insert(tk.END, result['correction'] if result['correction'] else sentence)
                 
-                suggestion_box.insert(tk.END, "\nGrammar Check Results:\n")
-                suggestion_box.insert(tk.END, f"Status: Grammatical errors found\n")
+                result_box.insert(tk.END, "\n\nGrammar Check Results:\n")
+                result_box.insert(tk.END, f"Status: Grammatical errors found\n")
                 if result['problematic_words']:
-                    suggestion_box.insert(tk.END, "Corrections needed:\n")
+                    result_box.insert(tk.END, "Corrections needed:\n")
                     for error in result['problematic_words']:
-                        suggestion_box.insert(tk.END, 
+                        result_box.insert(tk.END, 
                             f"• '{error['word']}' → '{error['correction']}'\n")
             else:
                 result_box.insert(tk.END, sentence)
-                suggestion_box.insert(tk.END, "\n✓ No grammatical errors found\n")
+                result_box.insert(tk.END, "\n\nGrammar Check Results:\n")
+                result_box.insert(tk.END, "\nStatus: ✓ No grammatical errors found\n")
                 
         except Exception as e:
             messagebox.showerror("Error", f"Error during grammar checking: {str(e)}")
@@ -76,7 +69,7 @@ def launch_ui():
 
     # Input Text Box
     tk.Label(root, text="Enter Text:").pack()
-    input_box = tk.Text(root, height=10, width=50)
+    input_box = tk.Text(root, height=15, width=100)
     input_box.pack()
 
     # Check Button
@@ -84,13 +77,8 @@ def launch_ui():
 
     # Corrected Text Box
     tk.Label(root, text="Corrected Sentence:").pack()
-    result_box = tk.Text(root, height=5, width=50)
+    result_box = tk.Text(root, height=15, width=100)
     result_box.pack()
-
-    # Suggestions Text Box
-    tk.Label(root, text="Suggestions:").pack()
-    suggestion_box = tk.Text(root, height=10, width=50)
-    suggestion_box.pack()
 
     # Run the application
     root.mainloop()
