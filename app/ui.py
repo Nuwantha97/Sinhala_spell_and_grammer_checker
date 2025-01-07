@@ -16,15 +16,37 @@ def launch_ui():
             messagebox.showwarning("Input Error", "Please enter some text!")
             return
 
+        # Perform grammar check on corrected sentence
+        result = check_grammar(input_text)
+
+        if result['correction']:
+            sentence = result['correction']
+        else:
+            sentence = input_text
+
         try:
             # Perform spell checking
-            original_sentence, corrected_sentence = check_sentence(input_text, sinhala_dictionary)
-    
-            # Perform grammar check on corrected sentence
-            check_grammar(corrected_sentence)
+            original_sentence, corrected_sentence = check_sentence(sentence, sinhala_dictionary)
+
+            if result['has_error']:
+                result_box.insert(tk.END, result['correction'] if result['correction'] else corrected_sentence)
+                
+                result_box.insert(tk.END, "\n\nGrammar Check Results:\n")
+                result_box.insert(tk.END, f"\nStatus: Grammatical errors found\n")
+                if result['problematic_words']:
+                    result_box.insert(tk.END, "Corrections needed:\n")
+                    for error in result['problematic_words']:
+                        result_box.insert(tk.END, 
+                            f"• '{error['word']}' → '{error['correction']}'\n")
+            else:
+                result_box.insert(tk.END, corrected_sentence)
+                result_box.insert(tk.END, "\n\nGrammar Check Results:\n")
+                result_box.insert(tk.END, "\nStatus: ✓ No grammatical errors found\n")
             
         except Exception as e:
             messagebox.showerror("Error", f"Error during spell checking: {str(e)}")
+
+        
 
     def check_grammar(sentence):
         try:
@@ -40,24 +62,11 @@ def launch_ui():
             
             # Display results
             result_box.delete("1.0", tk.END)
-            
-            if result['has_error']:
-                result_box.insert(tk.END, result['correction'] if result['correction'] else sentence)
-                
-                result_box.insert(tk.END, "\n\nGrammar Check Results:\n")
-                result_box.insert(tk.END, f"\nStatus: Grammatical errors found\n")
-                if result['problematic_words']:
-                    result_box.insert(tk.END, "Corrections needed:\n")
-                    for error in result['problematic_words']:
-                        result_box.insert(tk.END, 
-                            f"• '{error['word']}' → '{error['correction']}'\n")
-            else:
-                result_box.insert(tk.END, sentence)
-                result_box.insert(tk.END, "\n\nGrammar Check Results:\n")
-                result_box.insert(tk.END, "\nStatus: ✓ No grammatical errors found\n")
                 
         except Exception as e:
             messagebox.showerror("Error", f"Error during grammar checking: {str(e)}")
+
+        return result
 
     def clear_all():
         input_box.delete("1.0", tk.END)
