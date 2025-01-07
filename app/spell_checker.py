@@ -40,5 +40,5 @@ def check_sentence(sentence, sinhala_dictionary):
     corrected_sentence = " ".join(corrected_words)
 
     # Return original sentence, corrected sentence, and suggestions
-    return sentence, corrected_sentence, suggestions
+    return sentence, corrected_sentence
 

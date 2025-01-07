@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 from app.spell_checker import check_sentence
 from app.utils import load_dictionary
 from app.grammar_checker import SinhalaGrammarChecker
@@ -18,7 +18,7 @@ def launch_ui():
 
         try:
             # Perform spell checking
-            original_sentence, corrected_sentence, suggestions = check_sentence(input_text, sinhala_dictionary)
+            original_sentence, corrected_sentence = check_sentence(input_text, sinhala_dictionary)
     
             # Perform grammar check on corrected sentence
             check_grammar(corrected_sentence)
@@ -45,7 +45,7 @@ def launch_ui():
                 result_box.insert(tk.END, result['correction'] if result['correction'] else sentence)
                 
                 result_box.insert(tk.END, "\n\nGrammar Check Results:\n")
-                result_box.insert(tk.END, f"Status: Grammatical errors found\n")
+                result_box.insert(tk.END, f"\nStatus: Grammatical errors found\n")
                 if result['problematic_words']:
                     result_box.insert(tk.END, "Corrections needed:\n")
                     for error in result['problematic_words']:
@@ -59,27 +59,95 @@ def launch_ui():
         except Exception as e:
             messagebox.showerror("Error", f"Error during grammar checking: {str(e)}")
 
-
+    def clear_all():
+        input_box.delete("1.0", tk.END)
+        result_box.delete("1.0", tk.END)
 
     # Create the main window
     root = tk.Tk()
     root.title("Sinhala Spell and Grammar Checker")
+    root.configure(bg='#f0f0f0')
+    
+    # Add padding around the main window
+    main_frame = ttk.Frame(root, padding="10")
+    main_frame.pack(fill=tk.BOTH, expand=True)
 
-    # Disable window resizing
-    root.resizable(False, False)
+    # Title section
+    title_frame = ttk.Frame(main_frame)
+    title_frame.pack(fill=tk.X, pady=(0, 15))
+    
+    title_label = ttk.Label(
+        title_frame,
+        text="Sinhala Spell and Grammar Checker",
+        font=('Helvetica', 16, 'bold')
+    )
+    title_label.pack()
 
-    # Input Text Box
-    tk.Label(root, text="Enter Text:").pack()
-    input_box = tk.Text(root, height=15, width=100)
-    input_box.pack()
+    # Input section
+    input_frame = ttk.LabelFrame(main_frame, text="Enter Text", padding="5")
+    input_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
+    
+    input_box = tk.Text(
+        input_frame,
+        height=15,
+        width=100,
+        font=('TkDefaultFont', 11),
+        wrap=tk.WORD,
+        relief="solid",
+        borderwidth=1
+    )
+    input_box.pack(padx=5, pady=5)
 
-    # Check Button
-    tk.Button(root, text="Check", command=check_spelling).pack()
+    # Button styling
+    style = ttk.Style()
+    style.configure(
+        'Check.TButton',
+        font=('Helvetica', 11),
+        padding=10
+    )
+    
+    # Button section
+    button_frame = ttk.Frame(main_frame)
+    button_frame.pack(pady=(0, 10))
+    
+    check_button = ttk.Button(
+        button_frame,
+        text="Check Spelling and Grammar",
+        command=check_spelling,
+        style='Check.TButton'
+    )
+    check_button.pack(side=tk.LEFT, padx=5)
 
-    # Corrected Text Box
-    tk.Label(root, text="Corrected Sentence:").pack()
-    result_box = tk.Text(root, height=15, width=100)
-    result_box.pack()
+    clear_button = ttk.Button(
+        button_frame,
+        text="Clear All",
+        command=clear_all,
+        style='Check.TButton'
+    )
+    clear_button.pack(side=tk.LEFT, padx=5)
+
+    # Result section
+    result_frame = ttk.LabelFrame(main_frame, text="Corrected Sentence", padding="5")
+    result_frame.pack(fill=tk.BOTH, expand=True)
+    
+    result_box = tk.Text(
+        result_frame,
+        height=15,
+        width=100,
+        font=('TkDefaultFont', 11),
+        wrap=tk.WORD,
+        relief="solid",
+        borderwidth=1
+    )
+    result_box.pack(padx=5, pady=5)
+
+    # Center the window on screen
+    root.update_idletasks()
+    width = root.winfo_width()
+    height = root.winfo_height()
+    x = (root.winfo_screenwidth() // 2) - (width // 2)
+    y = (root.winfo_screenheight() // 2) - (height // 2)
+    root.geometry(f'+{x}+{y}')
 
     # Run the application
     root.mainloop()
