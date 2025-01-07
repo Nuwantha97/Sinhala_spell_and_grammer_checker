@@ -1,0 +1,1 @@
+{"model_type": "xlm-roberta", "num_labels": 2, "max_length": 512, "version": "1.0", "vocab_size": 250002, "max_position_embeddings": 514, "type_vocab_size": 1}
