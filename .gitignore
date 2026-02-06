@@ -1,2 +1,5 @@
 *.safetensors
 __pycache__/
+
+# Virtual environments
+.venv/
