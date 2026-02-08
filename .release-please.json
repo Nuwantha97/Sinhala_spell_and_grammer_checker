@@ -5,7 +5,7 @@
         "backend": {
             "release-type": "python",
             "package-name": "fastapi-backend",
-            "changelog-path": "backend/CHANGELOG.md",
+            "changelog-path": "CHANGELOG.md",
             "draft": false,
             "prerelease": false,
             "skip-github-release": false,
@@ -14,7 +14,7 @@
         "frontend": {
             "release-type": "python",
             "package-name": "pyside6-frontend",
-            "changelog-path": "frontend/CHANGELOG.md",
+            "changelog-path": "CHANGELOG.md",
             "draft": false,
             "prerelease": false,
             "skip-github-release": false,
