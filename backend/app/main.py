@@ -1,13 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
+from app.api.v1.endpoints.ai_inference import router as api_router
 
 app = FastAPI()
 
+app.include_router(api_router)
 
-@app.get("/home")
+@app.get("/")
 def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None):
-    return {"item_id": item_id, "q": q}
+    return Response(status_code=200,)
