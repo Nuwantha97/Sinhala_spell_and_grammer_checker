@@ -3,8 +3,9 @@ from PySide6.QtWidgets import (
     QLabel, QTextEdit, QPushButton, QFrame, QGroupBox,
     QSizePolicy
 )
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, Signal, QThreadPool
 from PySide6.QtGui import QFont, QColor, QPalette
+from api_client import APIWorker
 
 
 class MainWindow(QMainWindow):
@@ -20,12 +21,15 @@ class MainWindow(QMainWindow):
         self._setup_styles()
         self._create_ui()
         self._center_window()
+        
+        # Initialize thread pool for API calls
+        self.thread_pool = QThreadPool()
     
     def _setup_window(self):
         """Configure main window properties"""
         self.setWindowTitle("Sinhala Spell and Grammar Checker")
-        self.setMinimumSize(900, 700)
-        self.resize(1000, 800)
+        self.setMinimumSize(700, 500)
+        self.resize(900, 700)
     
     def _setup_styles(self):
         """Setup application styles and color palette"""
@@ -35,7 +39,8 @@ class MainWindow(QMainWindow):
             }
             QWidget {
                 color: #eaeaea;
-                font-family: 'Segoe UI', 'Nirmala UI', Arial, sans-serif;
+                font-family: 'Noto Sans Sinhala', 'Iskoola Pota', 'Nirmala UI', sans-serif;
+
             }
             QGroupBox {
                 background-color: #16213e;
@@ -278,9 +283,32 @@ class MainWindow(QMainWindow):
         """Handle check button click"""
         input_text = self.get_input_text()
         if input_text:
-            self.check_requested.emit(input_text)
+            self.set_checking_state(True)
+            
+            # Create worker and connect signals
+            worker = APIWorker(input_text)
+            worker.signals.finished.connect(self._on_api_success)
+            worker.signals.error.connect(self._on_api_error)
+            
+            # Run in thread pool
+            self.thread_pool.start(worker)
         else:
             self.show_error("Input Error", "Please enter some text!")
+    
+    def _on_api_success(self, result: dict):
+        """Handle successful API response"""
+        self.set_checking_state(False)
+        
+        corrected_sentence = result.get("corrected_sentence", "")
+        corrections = result.get("corrections", [])
+        has_errors = len(corrections) > 0
+        print(result, has_errors, corrections)
+        self.show_success_result(corrected_sentence, has_errors, corrections)
+    
+    def _on_api_error(self, error_message: str):
+        """Handle API error"""
+        self.set_checking_state(False)
+        self.show_error("Connection Error", error_message)
     
     def _on_clear_clicked(self):
         """Handle clear button click"""

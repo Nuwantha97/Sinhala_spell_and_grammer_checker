@@ -16,4 +16,5 @@ async def check_spelling(request: Request):
     # Load the Sinhala dictionary CSV
     sinhala_dictionary = load_dictionary("app/utils/sinhala_dict_with_ipa.csv")
     body = await request.json()
+    print(body)
     return check_sentence(body["sentence"], sinhala_dictionary)

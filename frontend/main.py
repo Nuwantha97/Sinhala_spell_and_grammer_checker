@@ -10,7 +10,7 @@ def main():
     app = QApplication(sys.argv)
     
     # Set application-wide font with Sinhala support
-    font = QFont("Nirmala UI", 11)  # Nirmala UI has good Sinhala support
+    font = QFont("Noto Sans Sinhala", 11)
     font.setStyleHint(QFont.SansSerif)
     app.setFont(font)
     

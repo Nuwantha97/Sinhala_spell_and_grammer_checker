@@ -39,6 +39,16 @@ def check_sentence(sentence, sinhala_dictionary):
     # Combine corrected words into a sentence
     corrected_sentence = " ".join(corrected_words)
 
+    print("sentence", sentence, "corrected_sentence", corrected_sentence, "suggestions", suggestions)
+
     # Return original sentence, corrected sentence, and suggestions
-    return sentence, corrected_sentence
+    return {
+    "original_sentence": sentence,
+    "corrected_sentence": corrected_sentence,
+    "corrections": [
+        {"word": word, "correction": sugg[0][0], "distance": sugg[0][1]}
+        for word, sugg in suggestions.items()
+        if sugg[0][0] != word  # Only include actual corrections
+    ]
+}
 
